@@ -27,7 +27,15 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     public function create(array $data)
     {
-        return Article::create($data);
+        // Manually assign fields to prevent mass assignment
+        $article = new Article();
+        $article->title = $data['title'];
+        $article->content = $data['content'];
+        $article->category_id = $data['category_id'];
+        $article->source_id = $data['source_id'];
+
+        // Save the article and return the instance
+        $article->save();
     }
 
     public function update(int $id, array $data)
