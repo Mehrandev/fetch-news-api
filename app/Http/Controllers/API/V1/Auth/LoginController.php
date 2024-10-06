@@ -19,11 +19,11 @@ class LoginController
         $token = $this->authService->login($validated['email'], $validated['password']);
 
         if (!$token) {
-            $response = $this->responseService->sendError('Invalid credentials', [], 401);
+            $response = $this->responseService->sendError('Invalid credentials', []);
             return response()->json($response, 401);
         }
 
-        $response = $this->responseService->sendResponse(['token' => $token], 'Login successful', 200);
-        return response()->json($response, 200);
+        $response = $this->responseService->sendResponse(['token' => $token], 'Login successful',);
+        return response()->json($response);
     }
 }

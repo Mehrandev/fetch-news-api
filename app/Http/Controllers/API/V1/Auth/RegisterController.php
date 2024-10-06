@@ -19,7 +19,7 @@ class RegisterController
     public function __invoke(RegisterRequest $request): JsonResponse
     {
         $user = $this->authService->register($request->validated());
-        $response = $this->responseService->sendResponse(new UserResource($user), 'User registered successfully', 201);
+        $response = $this->responseService->sendResponse(new UserResource($user), 'User registered successfully');
         return response()->json($response, 201);
     }
 }
