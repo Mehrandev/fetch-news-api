@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\V1\Article\ListArticlesController;
+use App\Http\Controllers\API\V1\Article\ShowArticleController;
 use App\Http\Controllers\API\V1\Auth\LoginController;
 use App\Http\Controllers\API\V1\Auth\LogoutController;
 use App\Http\Controllers\API\V1\Auth\RegisterController;
@@ -16,6 +17,7 @@ Route::prefix('v1')->group(function () {
     Route::prefix('articles')->group(function () {
         // List articles with pagination, filtering, and searching
         Route::get('/', ListArticlesController::class)->name('articles.list');
+        Route::get('/{id}', ShowArticleController::class)->where('id', '[0-9]+')->name('articles.show');
     });
 
 });

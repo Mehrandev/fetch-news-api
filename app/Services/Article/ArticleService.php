@@ -2,6 +2,7 @@
 
 namespace App\Services\Article;
 
+use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
@@ -17,6 +18,11 @@ class ArticleService
     public function getAllArticles(array $filters = [])
     {
         return $this->articleRepository->getAll($filters);
+    }
+
+    public function getArticleById(int $id): ?Article
+    {
+        return $this->articleRepository->findById($id);
     }
 
     public function createArticle(array $data)
