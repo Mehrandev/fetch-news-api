@@ -1,0 +1,117 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Articles API",
+        "description": "API Documentation for the Articles module",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/articles": {
+            "get": {
+                "tags": [
+                    "Articles"
+                ],
+                "summary": "Get list of articles",
+                "description": "Retrieve a paginated list of articles based on various filters",
+                "operationId": "getArticles",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Number of articles per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful retrieval of articles",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Article"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request parameters"
+                    },
+                    "500": {
+                        "description": "Server error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Article": {
+                "title": "Article",
+                "description": "Schema for an article",
+                "properties": {
+                    "id": {
+                        "description": "Unique identifier for the article",
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "description": "Title of the article",
+                        "type": "string",
+                        "example": "Technology Advances"
+                    },
+                    "content": {
+                        "description": "Content of the article",
+                        "type": "string",
+                        "example": "This is the content of the article."
+                    },
+                    "category": {
+                        "description": "Category of the article",
+                        "type": "string",
+                        "example": "Technology"
+                    },
+                    "source": {
+                        "description": "Source of the article",
+                        "type": "string",
+                        "example": "TechCrunch"
+                    },
+                    "created_at": {
+                        "description": "Timestamp when the article was created",
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2024-10-10T14:00:00Z"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Articles",
+            "description": "Articles"
+        }
+    ]
+}
