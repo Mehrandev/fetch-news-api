@@ -260,7 +260,7 @@ With these steps, you should be able to run the project from scratch using Docke
 ### 6. **Additional Enhancements**
 - Implement a **caching layer** for commonly accessed endpoints to reduce database load and improve response times.
 - Introduce a separate `ArticleCacheRepository` for managing caching logic independently of business logic.
-
+- We can add more rate limits and customize them based on our need.
 ### 7. **Security Considerations**
 - Implement checks for XSS and other potential security vulnerabilities when handling data from external sources.
 - Sanitize all incoming data before storing it in the database to prevent malicious input.
