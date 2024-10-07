@@ -3,6 +3,7 @@
 namespace App\Services\Article;
 
 use App\Repositories\Contracts\ArticleRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -44,6 +45,11 @@ class ArticleService
     public function deleteArticle(int $id)
     {
         return $this->articleRepository->delete($id);
+    }
+
+    public function getFilteredArticles(array $filters = []): LengthAwarePaginator
+    {
+        return $this->articleRepository->getFilteredArticles($filters);
     }
 
     /**

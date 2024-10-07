@@ -3,6 +3,7 @@
 namespace App\Repositories\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface ArticleRepositoryInterface
 {
@@ -15,4 +16,6 @@ interface ArticleRepositoryInterface
     public function update(int $id, array $data);
 
     public function delete(int $id);
+
+    public function getFilteredArticles(array $filters = []): LengthAwarePaginator;
 }

@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ArticleRepository implements ArticleRepositoryInterface
 {
@@ -22,7 +23,7 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     public function findById(int $id)
     {
-        return Article::find($id);
+        return Article::with(['category', 'source'])->find($id);
     }
 
     public function create(array $data)
@@ -51,5 +52,45 @@ class ArticleRepository implements ArticleRepositoryInterface
     public function delete(int $id)
     {
         return Article::destroy($id);
+    }
+
+    public function getFilteredArticles(array $filters = []): LengthAwarePaginator
+    {
+        $query = Article::with(['category', 'source']);
+
+        // Apply search filter
+        if (!empty($filters['search'])) {
+            $query->where('title', 'like', '%' . $filters['search'] . '%'); // we can use full text search here
+        }
+
+        // Filter by category
+        if (!empty($filters['category'])) {
+            $query->whereHas('category', function ($q) use ($filters) {
+                $q->where('name', $filters['category']);
+            });
+        }
+
+        // Filter by source
+        if (!empty($filters['source'])) {
+            $query->whereHas('source', function ($q) use ($filters) {
+                $q->where('name', $filters['source']);
+            });
+        }
+
+        // Filter by specific date
+        if (!empty($filters['date'])) {
+            $query->whereDate('created_at', $filters['date']);
+        }
+
+        // Apply specific date filter
+        if (!empty($filters['date'])) {
+            $query->whereDate('created_at', $filters['date']);
+        }
+
+        // Pagination parameters
+        $limit = $filters['limit'] ?? 10;
+        $page = $filters['page'] ?? 1;
+
+        return $query->paginate($limit, ['*'], 'page', $page);
     }
 }
