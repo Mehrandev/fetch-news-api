@@ -6,10 +6,12 @@ use App\Factories\Contracts\RepositoryFactoryInterface;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\SourceRepositoryInterface;
+use App\Repositories\Contracts\UserPersonalizationRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\ArticleRepository;
 use App\Repositories\Eloquent\CategoryRepository;
 use App\Repositories\Eloquent\SourceRepository;
+use App\Repositories\Eloquent\UserPersonalizationRepository;
 use App\Repositories\Eloquent\UserRepository;
 
 class RepositoryFactory implements RepositoryFactoryInterface
@@ -38,5 +40,10 @@ class RepositoryFactory implements RepositoryFactoryInterface
     public function createSourceRepository(): SourceRepositoryInterface
     {
         return new SourceRepository();
+    }
+
+    public function createUserPersonalizationRepository(): UserPersonalizationRepositoryInterface
+    {
+        return new UserPersonalizationRepository();
     }
 }

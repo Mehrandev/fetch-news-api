@@ -7,6 +7,7 @@ use App\Factories\RepositoryFactory;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use App\Repositories\Contracts\CategoryRepositoryInterface;
 use App\Repositories\Contracts\SourceRepositoryInterface;
+use App\Repositories\Contracts\UserPersonalizationRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Eloquent\UserRepository;
 use Illuminate\Support\ServiceProvider;
@@ -37,6 +38,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->singleton(UserRepositoryInterface::class, function ($app) {
             return $app->make(RepositoryFactory::class)->createUserRepository();
+        });
+
+        $this->app->singleton(UserPersonalizationRepositoryInterface::class, function ($app) {
+            return $app->make(RepositoryFactory::class)->createUserPersonalizationRepository();
         });
     }
 

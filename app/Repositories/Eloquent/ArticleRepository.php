@@ -4,11 +4,33 @@ namespace App\Repositories\Eloquent;
 
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
+use App\Repositories\Filters\Article\CategoryFilter;
+use App\Repositories\Filters\Article\DateFilter;
+use App\Repositories\Filters\Article\SearchFilter;
+use App\Repositories\Filters\Article\SourceFilter;
+use App\Repositories\Filters\FilterManager;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ArticleRepository implements ArticleRepositoryInterface
 {
+
+    private FilterManager $filterManager;
+
+    public function __construct()
+    {
+        $this->filterManager = new FilterManager();
+        $this->registerFilters();
+    }
+
+    private function registerFilters(): void
+    {
+        $this->filterManager->addFilter('category_id', new CategoryFilter());
+        $this->filterManager->addFilter('source_id', new SourceFilter());
+        $this->filterManager->addFilter('search', new SearchFilter());
+        $this->filterManager->addFilter('date', new DateFilter());
+    }
+
     public function getAll(array $filters = []): Collection
     {
         return Article::query()
@@ -56,41 +78,17 @@ class ArticleRepository implements ArticleRepositoryInterface
 
     public function getFilteredArticles(array $filters = []): LengthAwarePaginator
     {
-        $query = Article::with(['category', 'source']);
 
-        // Apply search filter
-        if (!empty($filters['search'])) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%'); // we can use full text search here
-        }
+        $query = Article::query()->select('id', 'title', 'content', 'category_id', 'source_id', 'created_at');
 
-        // Filter by category
-        if (!empty($filters['category'])) {
-            $query->whereHas('category', function ($q) use ($filters) {
-                $q->where('name', $filters['category']);
-            });
-        }
+        // Apply filters using the FilterManager
+        $this->filterManager->apply($query, $filters);
 
-        // Filter by source
-        if (!empty($filters['source'])) {
-            $query->whereHas('source', function ($q) use ($filters) {
-                $q->where('name', $filters['source']);
-            });
-        }
-
-        // Filter by specific date
-        if (!empty($filters['date'])) {
-            $query->whereDate('created_at', $filters['date']);
-        }
-
-        // Apply specific date filter
-        if (!empty($filters['date'])) {
-            $query->whereDate('created_at', $filters['date']);
-        }
-
-        // Pagination parameters
+        // Apply pagination parameters
         $limit = $filters['limit'] ?? 10;
         $page = $filters['page'] ?? 1;
 
-        return $query->paginate($limit, ['*'], 'page', $page);
+        return $query->paginate($limit, ['id', 'title', 'content', 'created_at'], 'page', $page);
+
     }
 }

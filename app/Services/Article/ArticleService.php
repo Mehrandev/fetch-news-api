@@ -4,11 +4,12 @@ namespace App\Services\Article;
 
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
+use App\Services\Article\Contracts\ArticleServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
-class ArticleService
+class ArticleService implements ArticleServiceInterface
 {
 
     public function __construct(private ArticleRepositoryInterface $articleRepository)
