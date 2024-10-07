@@ -1,66 +1,271 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Project Docker Setup
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Project Setup Guide
 
-## About Laravel
+### Prerequisites
+Make sure you have the following installed on your machine:
+- **Docker**: [Download and install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose**: Docker Compose is included with the latest version of Docker Desktop
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Getting Started
+Follow the steps below to set up the project from scratch using Docker.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Step 1: **Clone the Repository**
 
-## Learning Laravel
+Clone this repository to your local machine:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+git clone <repository_url>
+cd <project_directory>
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Replace `<repository_url>` with the URL of your repository and `<project_directory>` with the directory name.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+### Step 2: **Set Up the Environment Variables**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Create a `.env` file in the root directory and configure it based on the example provided below:
 
-### Premium Partners
+```ini
+# Laravel Environment
+APP_NAME=Laravel
+APP_ENV=local
+APP_KEY=base64:ZOdAl4+8/7zckLo+dTi1bGZKZwBFGtHvl9CF7aliz3I=
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Database Configuration
+DB_CONNECTION=mysql
+DB_HOST=db
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=laravel_user
+DB_PASSWORD=secret
+NEWSAPI_KEY=d1fb2e97cec44005aa9e279ddea37f51
 
-## Contributing
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+If you already have an `.env.example` file, you can create `.env` using:
 
-## Code of Conduct
+```bash
+cp .env.example .env
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Step 3: **Build and Start the Docker Containers**
 
-## Security Vulnerabilities
+Run the following command to build and start the Docker containers:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+docker-compose up --build -d
+```
 
-## License
+- `--build`: Forces the Docker build process.
+- `-d`: Runs the containers in detached mode (in the background).
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This command will start the following containers:
+- **app**: The Laravel application using the built-in server.
+- **db**: MySQL database service.
+
+### Step 4: **Install Laravel Dependencies**
+
+Once the containers are up and running, access the `app` container to install the Laravel dependencies:
+
+```bash
+docker-compose exec app composer install
+```
+
+### Step 5: **Generate Application Key**
+
+Generate a new application key for the Laravel application:
+
+```bash
+docker-compose exec app php artisan key:generate
+```
+
+### Step 6: **Run Database Migrations**
+
+Run the database migrations to create the necessary tables:
+
+```bash
+docker-compose exec app php artisan migrate
+```
+
+### Step 7: **Seed the Database**
+
+Seed the database with initial data:
+
+```bash
+docker-compose exec app php artisan db:seed
+```
+
+### Step 8: **Access the Application**
+
+After completing the above steps, you can access the application in your browser at:
+
+```
+http://127.0.0.1:8000
+```
+
+### Step 9: **Access the MySQL Database**
+
+You can access the MySQL database using any MySQL client (e.g., MySQL Workbench, DBeaver, or TablePlus) using the following credentials:
+
+- **Host**: `127.0.0.1`
+- **Port**: `3306`
+- **Username**: `laravel_user`
+- **Password**: `secret`
+- **Database Name**: `laravel`
+
+### Step 10: **Stop the Docker Containers**
+
+To stop the containers, run the following command:
+
+```bash
+docker-compose down
+```
+
+### Step 11: **Run swagger documentation**
+
+To generate swagger documentation run :
+
+```bash
+docker-compose exec app php artisan l5-swagger:generate
+```
+
+### Step 11: **Run test**
+
+To run tests , run :
+
+```bash
+docker-compose exec app php artisan test
+```
+
+---
+
+### Troubleshooting
+
+- **Permission Issues**:
+  If you encounter permission issues with the `storage` or `bootstrap/cache` directories, run the following command:
+
+  ```bash
+  docker-compose exec app chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+  ```
+
+- **Database Connection Error**:
+  Ensure that the `DB_HOST` in your `.env` file is set to `db` (the name of the database service in `docker-compose.yml`).
+
+---
+
+### Folder Structure
+
+The project folder structure should look like this:
+
+```
+├── app/
+├── bootstrap/
+├── config/
+├── database/
+├── docker/
+├── public/
+├── resources/
+├── routes/
+├── storage/
+├── tests/
+├── .env
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+### Customizing the Setup
+
+If you need to customize the Docker setup (e.g., change MySQL version or PHP extensions), you can modify the following files:
+
+1. **Dockerfile**: Customize PHP version and extensions.
+2. **docker-compose.yml**: Modify the services and environment variables.
+3. **.env**: Configure Laravel environment and database settings.
+
+---
+
+### Additional Commands
+
+- **Rebuild Docker Images**:
+  If you make changes to the `Dockerfile` or `docker-compose.yml`, rebuild the images:
+
+  ```bash
+  docker-compose build
+  ```
+
+- **Check Logs**:
+  To view the logs for any service, use:
+
+  ```bash
+  docker-compose logs app
+  docker-compose logs db
+  ```
+
+- **Run Artisan Commands**:
+  Run Laravel Artisan commands directly in the `app` container:
+
+  ```bash
+  docker-compose exec app php artisan <command>
+  ```
+
+---
+
+---
+- **Fetching data**:
+    After 1 minute you should be able to see data being fetched and store in database
+
+### Conclusion
+
+With these steps, you should be able to run the project from scratch using Docker. If you encounter any issues, please refer to the
+
+
+### Important notes about the project : 
+
+## Project Notes and Future Improvements
+
+### 1. **General Laravel Project Structure**
+- Separate requests, responses, and controllers into dedicated folders for each module.
+- Implement standardized response contracts for error and success responses to ensure consistent API output.
+- Use the **Factory Pattern** for creating complex objects to follow the SOLID principles and enhance code modularity.
+- **Rate Limiting**: Consider implementing rate limiting for creating or updating user personalization settings to prevent abuse.
+
+### 2. **Testing Strategy**
+- Expand unit tests to cover all parts of the codebase, including services, repositories, and controllers.
+- Implement feature tests for critical paths such as article listings, user authentication, and personalized settings.
+- Cover all types of errors for endpoints to ensure robust validation and error handling.
+
+### 3. **Swagger Documentation**
+- Expand Swagger to cover all API endpoints, including request and response schemas.
+- Use a modular structure for Swagger documentation, separating schemas from controllers to reduce clutter.
+
+### 4. **Database Optimization**
+- Implement **unique identifiers** for each article based on the source to prevent storing duplicate articles in the database.
+- Use database indexes on frequently queried fields (e.g., `title`, `category_id`, `source_id`) to improve search performance.
+- Use separate repositories for caching and database interactions to keep the service layer clean.
+
+### 5. **Future Architectural Improvements**
+- **Microservices Architecture**: Split the project into smaller services:
+    - **Fetching Service**: Responsible for crawling and fetching articles from external sources and adding them to the database.
+    - **User Service**: Manages user-specific settings and serves articles based on user preferences.
+    - Use a message queue (e.g., RabbitMQ) for communication between services.
+
+### 6. **Additional Enhancements**
+- Implement a **caching layer** for commonly accessed endpoints to reduce database load and improve response times.
+- Introduce a separate `ArticleCacheRepository` for managing caching logic independently of business logic.
+
+### 7. **Security Considerations**
+- Implement checks for XSS and other potential security vulnerabilities when handling data from external sources.
+- Sanitize all incoming data before storing it in the database to prevent malicious input.
+
+### 8. **Versioning and Scalability**
+- Use a well-defined versioning strategy for API endpoints (e.g., `V1`, `V2`) to manage breaking changes and provide backward compatibility.
+- Modularize the codebase to allow for easy addition of new modules and features in the future.
+

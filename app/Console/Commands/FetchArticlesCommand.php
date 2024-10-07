@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 
 class FetchArticlesCommand extends Command
 {
-    protected $signature = 'fetch:articles {--source=*}';
+    protected $signature = 'articles:fetch';
     protected $description = 'Fetch articles from specified third-party sources.';
 
     public function handle(): int
@@ -17,6 +17,7 @@ class FetchArticlesCommand extends Command
         FetchArticlesJob::dispatch();
 
         $this->info('FetchArticlesJob dispatched successfully to process all sources from the database.');
+        $this->info('News fetched successfully.');
         return Command::SUCCESS;
     }
 }

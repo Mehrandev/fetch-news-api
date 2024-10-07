@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+    # Laravel App Container with cron support
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: laravel_app
+        ports:
+            - "8080:8000"
+        volumes:
+            - .:/var/www/html
+        networks:
+            - laravel-network
+        depends_on:
+            - db
+
+    # MySQL Database Service
+    db:
+        image: mysql:8.0
+        container_name: mysql_db
+        restart: unless-stopped
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_ROOT_PASSWORD: secret
+            MYSQL_USER: laravel_user
+            MYSQL_PASSWORD: secret
+        volumes:
+            - dbdata2:/var/lib/mysql
+        networks:
+            - laravel-network
+
+networks:
+    laravel-network:
+        driver: bridge
+
+volumes:
+    dbdata2:

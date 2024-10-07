@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Unit\Services;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
