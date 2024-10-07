@@ -19,8 +19,10 @@ Route::prefix('v1')->group(function () {
 
     Route::prefix('articles')->group(function () {
         // List articles with pagination, filtering, and searching
-        Route::get('/', ListArticlesController::class)->name('articles.list');
-        Route::get('/{id}', ShowArticleController::class)->where('id', '[0-9]+')->name('articles.show');
+        Route::middleware(['throttle:api'])->group(function () {
+            Route::get('/', ListArticlesController::class)->name('articles.list');
+            Route::get('/{id}', ShowArticleController::class)->where('id', '[0-9]+')->name('articles.show');
+        });
     });
 
     Route::middleware('auth:sanctum')->prefix('personalization')->group(function () {

@@ -12,6 +12,9 @@ use App\Services\Category\CategoryService;
 use App\Services\Decorators\CachedArticleService;
 use App\Services\Personalization\UserPersonalizationService;
 use App\Services\Source\SourceService;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -61,6 +64,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RateLimiter::for('api', function (Request $request) {
+            return Limit::perMinute(10)->response(function (Request $request, array $headers) {
+                $response = ['success' => false,
+                    'message' => "Too many requests",
+                    'errors' => null];
+                return response()->json($response, 429, $headers);
+            });
+        });
     }
 }
