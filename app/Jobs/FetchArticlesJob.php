@@ -5,12 +5,10 @@ namespace App\Jobs;
 use App\Factories\SourceFactory;
 use App\Services\Article\ArticleService;
 use App\Services\Category\CategoryService;
-use App\Services\Source\NewsAPISource;
 use App\Services\Source\SourceService;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Validator;
 
 class FetchArticlesJob
 {
@@ -40,6 +38,7 @@ class FetchArticlesJob
             Log::warning("No category to fetch");
             return;
         }
+        $articleData = [];
 
         foreach ($sources as $source) {
             // Use the factory to create the appropriate source class
@@ -48,17 +47,18 @@ class FetchArticlesJob
                 // Fetch and transform articles for each source using NewsAPI
                 $articles = $sourceInstance->transform($sourceInstance->fetch($category->name)); //we can pass pages and etc for unlimited data fetch .
 
-                foreach ($articles as $articleData) {
-
-                    // Create the article linked to the category and source
-                    $articleService->createArticle([
-                        'title' => $articleData['title'],
-                        'content' => $articleData['content'],
+                foreach ($articles as $article) {
+                    $articleData[] = [
+                        'title' => $article['title'],
+                        'content' => $article['content'],
                         'category_id' => $category->id,
                         'source_id' => $source->id,  // Use source ID from the DB
-                    ]);
+                    ];
                 }
             }
+        }
+        if (count($articleData) > 0) {
+            $articleService->bulkCreateArticles($articleData);
         }
     }
 }

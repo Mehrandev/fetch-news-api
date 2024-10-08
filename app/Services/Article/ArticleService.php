@@ -26,6 +26,11 @@ class ArticleService implements ArticleServiceInterface
         return $this->articleRepository->findById($id);
     }
 
+    public function getArticleByIdOrFail(int $id): ?Article
+    {
+        return $this->articleRepository->findOrFailById($id);
+    }
+
     public function createArticle(array $data)
     {
 
@@ -60,6 +65,18 @@ class ArticleService implements ArticleServiceInterface
     }
 
     /**
+     * Bulk create articles.
+     *
+     * @param array $articleData
+     * @return bool
+     * @throws \Exception
+     */
+    public function bulkCreateArticles(array $articleData): bool
+    {
+        return $this->articleRepository->insertMany($articleData);
+    }
+
+    /**
      * Sanitize data to prevent XSS attacks.
      */
     private function sanitizeData(array $data): array
@@ -68,4 +85,6 @@ class ArticleService implements ArticleServiceInterface
             return is_string($value) ? htmlspecialchars($value, ENT_QUOTES, 'UTF-8') : $value;
         }, $data);
     }
+
+
 }

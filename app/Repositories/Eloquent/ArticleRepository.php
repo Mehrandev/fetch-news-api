@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Exceptions\ArticleDataInvalidException;
 use App\Models\Article;
 use App\Repositories\Contracts\ArticleRepositoryInterface;
 use App\Repositories\Filters\Article\CategoryFilter;
@@ -10,7 +11,9 @@ use App\Repositories\Filters\Article\SearchFilter;
 use App\Repositories\Filters\Article\SourceFilter;
 use App\Repositories\Filters\FilterManager;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class ArticleRepository implements ArticleRepositoryInterface
 {
@@ -90,5 +93,28 @@ class ArticleRepository implements ArticleRepositoryInterface
 
         return $query->paginate($limit, ['id', 'title', 'content', 'created_at'], 'page', $page);
 
+    }
+
+    public function findOrFailById(int $id)
+    {
+        return Article::with(['category', 'source'])->findOrFail($id);
+    }
+
+
+    /**
+     * @param array $articles
+     * @return true
+     * @throws ArticleDataInvalidException
+     */
+    public function insertMany(array $articles): bool
+    {
+        try {
+            // Use the DB facade to perform a bulk insert
+            DB::table('articles')->insertOrIgnore($articles);
+            return true;
+        } catch (QueryException $e) {
+            // Catch and throw a custom exception if there is a database error
+            throw new ArticleDataInvalidException('Failed to insert articles due to invalid data: ' . $e->getMessage());
+        }
     }
 }

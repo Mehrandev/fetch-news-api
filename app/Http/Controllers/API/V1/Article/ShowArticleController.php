@@ -18,13 +18,7 @@ class ShowArticleController
     public function __invoke(int $id): JsonResponse
     {
         // Retrieve the article by ID
-        $article = $this->articleService->getArticleById($id);
-
-        // Check if the article exists
-        if (!$article) {
-            $response = $this->responseService->sendError('Article not found', []);
-            return response()->json($response, 404);
-        }
+        $article = $this->articleService->getArticleByIdOrFail($id);
 
         // Use ArticleResource to format the response
         $response = $this->responseService->sendResponse(new ArticleResource($article), 'Article retrieved successfully');
